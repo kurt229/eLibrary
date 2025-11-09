@@ -380,6 +380,12 @@
             position: relative;
         }
 
+        @media (max-width: 968px) {
+            .stats {
+                padding-top: 1rem; /* Réduit encore plus l'espace en haut de la section stats sur mobile */
+            }
+        }
+
         .stats-grid {
             max-width: 1200px;
             margin: 0 auto;
@@ -674,17 +680,18 @@
 
             .hero {
                 /* reduce top padding slightly on mobile too */
-                padding: 7rem 5% 4rem;
+                padding: 7rem 5% 0; /* Supprime complètement le padding bottom */
             }
 
             .hero-content {
                 grid-template-columns: 1fr;
-                gap: 3rem;
+                gap: 1.5rem; /* Réduit encore plus l'espace entre le texte et le visuel */
             }
 
             .hero-visual {
-                height: 400px;
+                height: 300px; /* Réduit davantage la hauteur du visuel */
                 order: -1;
+                margin-bottom: -2rem; /* Augmente l'espace négatif pour rapprocher encore plus de la section suivante */
             }
 
             .book-3d-container {
@@ -700,13 +707,55 @@
                 text-align: center;
             }
 
+            /* Réduire l'espacement des sections après l'accueil */
+            .stats {
+                padding: 2rem 5%;
+            }
+
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
+                gap: 0.8rem;
+            }
+
+            .features {
+                padding: 3rem 5%;
+            }
+
+            .section-header {
+                margin-bottom: 2rem;
+            }
+
+            .section-title {
+                font-size: clamp(1.8rem, 4vw, 2.5rem);
+                margin-bottom: 1rem;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
             }
 
             .features-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .cta-section {
+                padding: 3rem 5%;
+            }
+
+            .cta-content h2 {
+                font-size: clamp(1.5rem, 4vw, 2.5rem);
+                margin-bottom: 1rem;
+            }
+
+            .cta-content p {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
             }
         }
 
@@ -716,7 +765,22 @@
             }
 
             .stat-card {
-                padding: 2rem 1.5rem;
+                padding: 1.2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-icon {
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .stat-label {
+                font-size: 0.9rem;
             }
 
             .hero-visual {
@@ -725,6 +789,34 @@
 
             .book-3d-container {
                 transform: scale(0.6);
+            }
+
+            .feature-card {
+                padding: 1.2rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .feature-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+                border-radius: 15px;
+            }
+
+            .feature-card h3 {
+                font-size: 1.2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .feature-card p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+
+            .btn-mega {
+                padding: 1rem 2.5rem;
+                font-size: 1rem;
             }
         }
     </style>
