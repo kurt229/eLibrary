@@ -637,6 +637,22 @@
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
+                // Vérification si l'email est confirmé
+                if (!user.emailVerified) {
+                    // Déconnexion de l'utilisateur
+                    await auth.signOut();
+                    
+                    btnLogin.classList.remove('loading');
+                    errorMessage.textContent = '⚠️ Veuillez confirmer votre email avant de vous connecter';
+                    errorMessage.classList.add('show');
+                    
+                    // Auto-hide error after 5s
+                    setTimeout(() => {
+                        errorMessage.classList.remove('show');
+                    }, 5000);
+                    return;
+                }
+                
                 console.log('Connexion réussie pour:', user.email);
                 btnLogin.classList.remove('loading');
                 successMessage.classList.add('show');
@@ -663,7 +679,17 @@
                 const provider = new firebase.auth.GoogleAuthProvider();
                 console.log('Tentative de connexion avec Google...');
                 const result = await auth.signInWithPopup(provider);
-                console.log('Connexion Google réussie pour:', result.user.email);
+                const user = result.user;
+                
+                // Pour Google, l'email est généralement déjà vérifié, mais on vérifie quand même
+                if (!user.emailVerified) {
+                    await auth.signOut();
+                    errorMessage.textContent = '⚠️ Veuillez confirmer votre email avant de vous connecter';
+                    errorMessage.classList.add('show');
+                    return;
+                }
+                
+                console.log('Connexion Google réussie pour:', user.email);
                 successMessage.classList.add('show');
                 setTimeout(() => {
                     window.location.href = 'index.html';
@@ -689,6 +715,8 @@
                     return '⚠️ Trop de tentatives. Veuillez réessayer plus tard';
                 case 'auth/popup-closed-by-user':
                     return '⚠️ La fenêtre de connexion a été fermée';
+                case 'auth/email-not-verified':
+                    return '⚠️ Veuillez confirmer votre email avant de vous connecter';
                 default:
                     return '⚠️ Une erreur est survenue. Veuillez réessayer';
             }
