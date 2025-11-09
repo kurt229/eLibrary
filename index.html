@@ -313,9 +313,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
             transform-style: preserve-3d;
             transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .book-3d img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
         }
 
         .book-3d:hover {
@@ -325,52 +332,35 @@
         .book-3d-1 {
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) translateZ(100px);
-            animation: float-book-1 4s ease-in-out infinite;
+            animation: position-swap 9s steps(1) infinite;
+            z-index: 3;
         }
 
         .book-3d-2 {
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) translateZ(0px) translateX(-150px) rotateY(30deg);
             background: linear-gradient(135deg, #2E8B57, #3CB371);
-            animation: float-book-2 4s ease-in-out infinite 1s;
-            opacity: 0.8;
+            animation: position-swap 9s steps(1) infinite -3s;
+            z-index: 2;
         }
 
         .book-3d-3 {
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) translateZ(-100px) translateX(150px) rotateY(-30deg);
             background: linear-gradient(135deg, #1a6b1a, #228B22);
-            animation: float-book-3 4s ease-in-out infinite 2s;
-            opacity: 0.6;
+            animation: position-swap 9s steps(1) infinite -6s;
+            z-index: 1;
         }
 
-        @keyframes float-book-1 {
-            0%, 100% { 
-                transform: translate(-50%, -50%) translateY(0) translateZ(100px);
+        @keyframes position-swap {
+            0%, 33% {
+                transform: translate(-50%, -50%) translateZ(100px);
             }
-            50% { 
-                transform: translate(-50%, -50%) translateY(-30px) translateZ(100px);
+            33.001%, 66% {
+                transform: translate(-50%, -50%) translateZ(-100px) translateX(150px) rotateY(-30deg);
             }
-        }
-
-        @keyframes float-book-2 {
-            0%, 100% { 
-                transform: translate(-50%, -50%) translateY(0) translateZ(0px) translateX(-150px) rotateY(30deg);
-            }
-            50% { 
-                transform: translate(-50%, -50%) translateY(-30px) translateZ(0px) translateX(-150px) rotateY(30deg);
-            }
-        }
-
-        @keyframes float-book-3 {
-            0%, 100% { 
-                transform: translate(-50%, -50%) translateY(0) translateZ(-100px) translateX(150px) rotateY(-30deg);
-            }
-            50% { 
-                transform: translate(-50%, -50%) translateY(-30px) translateZ(-100px) translateX(150px) rotateY(-30deg);
+            66.001%, 100% {
+                transform: translate(-50%, -50%) translateZ(-100px) translateX(-150px) rotateY(30deg);
             }
         }
 
@@ -654,6 +644,9 @@
         @media (max-width: 968px) {
             .mobile-menu-btn {
                 display: block;
+                /* s'assurer que le bouton reste au-dessus des autres couches */
+                z-index: 1100;
+                position: relative;
             }
 
             .nav-links {
@@ -669,6 +662,8 @@
                 align-items: center;
                 gap: 3rem;
                 transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                /* placer le menu mobile au-dessus du nav et autres éléments */
+                z-index: 1050;
             }
 
             .nav-links.active {
@@ -857,9 +852,9 @@
             </div>
             <div class="hero-visual">
                 <div class="book-3d-container">
-                    <div class="book-3d book-3d-1">📘</div>
-                    <div class="book-3d book-3d-2">📗</div>
-                    <div class="book-3d book-3d-3">📕</div>
+                    <div class="book-3d book-3d-1"><img src="assets/images/livre1.png" alt="Livre 1" width="200" height="280"></div>
+                    <div class="book-3d book-3d-2"><img src="assets/images/livre2.png" alt="Livre 2" width="200" height="280"></div>
+                    <div class="book-3d book-3d-3"><img src="assets/images/livre3.png" alt="Livre 3" width="200" height="280"></div>
                 </div>
             </div>
         </div>
@@ -952,17 +947,21 @@
         const navLinks = document.getElementById('navLinks');
         const navbar = document.getElementById('navbar');
 
-        menuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            menuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
-        });
-
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                menuBtn.textContent = '☰';
+        // Sécurité : vérifier que les éléments existent avant d'ajouter des écouteurs
+        if (menuBtn && navLinks) {
+            menuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                // Mettre à jour l'icône du bouton seulement si menuBtn existe
+                menuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
             });
-        });
+
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    menuBtn.textContent = '☰';
+                });
+            });
+        }
 
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
@@ -1040,3 +1039,6 @@
         document.querySelectorAll('.stat-card').forEach(card => {
             statsObserver.observe(card);
         });
+    </script>
+</body>
+</html>
