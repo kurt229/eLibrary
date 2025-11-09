@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HECM E-Library - Connexion</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-auth-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #228B22;
+            --secondary: #32CD32;
+            --dark: #0a0a0a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f0fff4 0%, #ffffff 50%, #e8f5e9 100%);
+            padding: 1rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(50, 205, 50, 0.1));
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .shape2 {
+            width: 300px;
+            height: 300px;
+            bottom: -80px;
+            right: -80px;
+            animation-delay: 5s;
+        }
+
+        .shape3 {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: -50px;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Container Principal */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+            padding: 2rem 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            animation: slideUp 0.6s ease-out;
+            margin: 1rem auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .logo-circle {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 15px 40px rgba(34, 139, 34, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .login-header h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+            letter-spacing: -1px;
+        }
+
+        .login-header .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        /* Form */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3rem;
+            color: #999;
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: white;
+            color: var(--dark);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(34, 139, 34, 0.1);
+        }
+
+        .form-control:focus + .input-icon {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .form-group:has(.form-control:focus) label {
+            color: var(--primary);
+        }
+
+        /* Toggle Password */
+        .toggle-password {
+            position: absolute;
+            right: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+            padding: 0.3rem;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
+
+        /* Remember & Forgot */
+        .form-options {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: -0.5rem 0 0.5rem;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-wrapper label {
+            font-size: 0.9rem;
+            color: #666;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .forgot-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .forgot-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .forgot-link:hover::after {
+            width: 100%;
+        }
+
+        /* Button */
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 10px 30px rgba(34, 139, 34, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            transition: left 0.4s;
+        }
+
+        .btn-login span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(34, 139, 34, 0.4);
+        }
+
+        .btn-login:hover::before {
+            left: 0;
+        }
+
+        .btn-login:active {
+            transform: translateY(-1px);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        /* Social Buttons */
+        .social-login {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .btn-social {
+            padding: 0.85rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .btn-social:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sign Up Link */
+        .signup-link {
+            text-align: center;
+            margin-top: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .signup-link a:hover {
+            color: var(--secondary);
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c33;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            margin-bottom: 1rem;
+            animation: shake 0.5s;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #efe;
+            border: 2px solid #cfc;
+            color: var(--primary);
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            margin-bottom: 1rem;
+            animation: slideDown 0.5s;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading State */
+        .btn-login.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-login.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+
+            .login-container {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            .login-header h1 {
+                font-size: 1.6rem;
+            }
+
+            .logo-circle {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+
+            .form-control {
+                padding: 0.9rem 1rem 0.9rem 3.2rem;
+            }
+
+            .social-login {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-circle">📚</div>
+            <h1><span class="gradient-text">HECM</span> E-Library</h1>
+            <p>Connectez-vous pour accéder à votre bibliothèque</p>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            ⚠️ Email ou mot de passe incorrect
+        </div>
+
+        <div class="success-message" id="successMessage">
+            ✅ Connexion réussie ! Redirection...
+        </div>
+
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-control" 
+                        placeholder="votre.email@hecm.bj"
+                        required
+                    >
+                    <span class="input-icon">📧</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-control" 
+                        placeholder="••••••••"
+                        required
+                    >
+                    <span class="input-icon">🔒</span>
+                    <button type="button" class="toggle-password" id="togglePassword">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <span>Se connecter</span>
+            </button>
+        </form>
+
+        <div class="divider">ou continuer avec</div>
+
+        <button class="btn-social" id="googleBtn" style="width: 100%;">
+            <span>🔍</span>
+            <span>Se connecter avec Google</span>
+        </button>
+
+        <div class="signup-link">
+            Pas encore de compte ? <a href="#">S'inscrire</a>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGGFAbcWN1OIyTNyqFJuNMDSpwCRY4Bek",
+            authDomain: "elibrary-86347.firebaseapp.com",
+            projectId: "elibrary-86347",
+            storageBucket: "elibrary-86347.firebasestorage.app",
+            messagingSenderId: "297172197811",
+            appId: "1:297172197811:web:901081dc9e9f787277ebc6",
+            measurementId: "G-FT78F4PMKY"
+        };
+
+        // Vérification de l'initialisation de Firebase
+        let auth;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            auth = firebase.auth();
+            console.log('Firebase initialisé avec succès');
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de Firebase:', error);
+            document.getElementById('errorMessage').textContent = '⚠️ Erreur de connexion au service d\'authentification';
+            document.getElementById('errorMessage').classList.add('show');
+        }
+
+        // Toggle Password Visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Form Submission
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const btnLogin = document.querySelector('.btn-login');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Hide messages
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+            
+            // Add loading state
+            btnLogin.classList.add('loading');
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                // Tentative de connexion avec Firebase
+                console.log('Tentative de connexion...');
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                console.log('Connexion réussie pour:', user.email);
+                btnLogin.classList.remove('loading');
+                successMessage.classList.add('show');
+                
+                // Redirection après connexion réussie
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                btnLogin.classList.remove('loading');
+                errorMessage.textContent = getErrorMessage(error.code);
+                errorMessage.classList.add('show');
+                
+                // Auto-hide error after 3s
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 3000);
+            }
+        });
+
+        // Connexion avec Google
+        document.getElementById('googleBtn').addEventListener('click', async () => {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                console.log('Tentative de connexion avec Google...');
+                const result = await auth.signInWithPopup(provider);
+                console.log('Connexion Google réussie pour:', result.user.email);
+                successMessage.classList.add('show');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                errorMessage.textContent = getErrorMessage(error.code);
+                errorMessage.classList.add('show');
+            }
+        });
+
+        // Fonction pour obtenir le message d'erreur en français
+        function getErrorMessage(errorCode) {
+            switch (errorCode) {
+                case 'auth/invalid-email':
+                    return '⚠️ Adresse email invalide';
+                case 'auth/user-disabled':
+                    return '⚠️ Ce compte a été désactivé';
+                case 'auth/user-not-found':
+                    return '⚠️ Aucun compte ne correspond à cet email';
+                case 'auth/wrong-password':
+                    return '⚠️ Mot de passe incorrect';
+                case 'auth/too-many-requests':
+                    return '⚠️ Trop de tentatives. Veuillez réessayer plus tard';
+                case 'auth/popup-closed-by-user':
+                    return '⚠️ La fenêtre de connexion a été fermée';
+                default:
+                    return '⚠️ Une erreur est survenue. Veuillez réessayer';
+            }
+        }
+
+        // Input animations
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Vérification de l'état de connexion
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('Utilisateur déjà connecté:', user.email);
+                // Si l'utilisateur est déjà connecté, rediriger vers la page d'accueil
+                window.location.href = 'index.html';
+            } else {
+                console.log('Aucun utilisateur connecté');
+            }
+        });
+    </script>
+</body>
+</html>
