@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HECM E-Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #228B22;
+            --secondary: #32CD32;
+            --dark: #0a0a0a;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f8f9fa;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #ffffff 0%, #f8fff8 100%);
+            border-right: 1px solid #e5e7eb;
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 2rem 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--gray);
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 2rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+            transition: height 0.3s;
+        }
+
+        .nav-item:hover {
+            background: rgba(34, 139, 34, 0.05);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(34, 139, 34, 0.1) 0%, transparent 100%);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-item.active::before {
+            height: 100%;
+        }
+
+        .nav-item-icon {
+            font-size: 1.3rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.25rem;
+            transition: transform 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-left h1 {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+        .topbar-left p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            width: 300px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: white;
+            border: 1px solid #e5e7eb;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.3rem;
+        }
+
+        .notification-btn:hover {
+            background: var(--light-gray);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: white;
+            border: 1px solid #e5e7eb;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3rem;
+        }
+
+        /* ========== DASHBOARD CONTENT ========== */
+        .dashboard-content {
+            padding: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0.05;
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .stat-icon.warning {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+
+        .stat-icon.danger {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+
+        .stat-trend {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .stat-trend.up {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .stat-trend.down {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--dark);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .chart-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: var(--light-gray);
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(180deg, #f8fff8 0%, white 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Recent Activity */
+        .activity-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .activity-item:hover {
+            background: #e8f5e9;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+            white-space: nowrap;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            padding: 1.5rem;
+            background: white;
+            border: 2px dashed #e5e7eb;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            background: rgba(34, 139, 34, 0.02);
+            transform: translateY(-3px);
+        }
+
+        .action-btn-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .action-btn-text {
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .search-bar input {
+                width: 200px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar {
+                padding: 1rem;
+            }
+
+            .topbar-left h1 {
+                font-size: 1.25rem;
+            }
+
+            .search-bar {
+                display: none;
+            }
+
+            .dashboard-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card, .chart-card, .activity-card, .action-btn {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">📚</div>
+                <span>HECM Admin</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Menu Principal</div>
+                <a href="#" class="nav-item active">
+                    <span class="nav-item-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">📚</span>
+                    <span>Livres</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">👥</span>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">✅</span>
+                    <span>Approbations</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Gestion</div>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">📁</span>
+                    <span>Catégories</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">📈</span>
+                    <span>Statistiques</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">💬</span>
+                    <span>Messages</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Système</div>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span>Paramètres</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-item-icon">🔔</span>
+                    <span>Notifications</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div class="user-info">
+                    <div class="user-name">Admin HECM</div>
+                    <div class="user-role">Administrateur</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Déconnexion">🚪</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+                <h1>Dashboard</h1>
+                <p>Bienvenue sur votre tableau de bord administrateur</p>
+            </div>
+            <div class="topbar-right">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+                <button class="notification-btn">
+                    🔔
+                    <span class="notification-badge">5</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon primary">📚</div>
+                        <span class="stat-trend up">↗ +12%</span>
+                    </div>
+                    <div class="stat-value">5,234</div>
+                    <div class="stat-label">Total Livres</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon success">👥</div>
+                        <span class="stat-trend up">↗ +8%</span>
+                    </div>
+                    <div class="stat-value">1,892</div>
+                    <div class="stat-label">Utilisateurs Actifs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon warning">⏳</div>
+                        <span class="stat-trend down">↘ -3%</span>
+                    </div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">En Attente</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon danger">📥</div>
+                        <span class="stat-trend up">↗ +24%</span>
+                    </div>
+                    <div class="stat-value">3,421</div>
+                    <div class="stat-label">Téléchargements</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="#" class="action-btn">
+                    <div class="action-btn-icon">➕</div>
+                    <div class="action-btn-text">Ajouter un Livre</div>
+                </a>
+                <a href="#" class="action-btn">
+                    <div class="action-btn-icon">✅</div>
+                    <div class="action-btn-text">Approuver Utilisateurs</div>
+                </a>
+                <a href="#" class="action-btn">
+                    <div class="action-btn-icon">📊</div>
+                    <div class="action-btn-text">Voir Rapports</div>
+                </a>
+                <a href="#" class="action-btn">
+                    <div class="action-btn-icon">⚙️</div>
+                    <div class="action-btn-text">Configuration</div>
+                </a>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Activité sur 7 jours</h3>
+                        <div class="chart-filter">
+                            <button class="filter-btn active">7J</button>
+                            <button class="filter-btn">30J</button>
+                            <button class="filter-btn">1A</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        📈 Graphique des téléchargements (intégrer Chart.js)
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Catégories Populaires</h3>
+                    </div>
+                    <div class="chart-placeholder">
+                        🥧 Graphique camembert (intégrer Chart.js)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Activité Récente</h3>
+                    <a href="#" class="filter-btn">Voir tout</a>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">📚</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Nouveau livre ajouté</div>
+                            <div class="activity-desc">"Introduction à la Gestion" - Catégorie: Économie</div>
+                        </div>
+                        <div class="activity-time">Il y a 5 min</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">✅</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Utilisateur approuvé</div>
+                            <div class="activity-desc">jean.dupont@hecm.bj a été approuvé</div>
+                        </div>
+                        <div class="activity-time">Il y a 12 min</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📥</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Téléchargement populaire</div>
+                            <div class="activity-desc">"Comptabilité Avancée" - 127 téléchargements aujourd'hui</div>
+                        </div>
+                        <div class="activity-time">Il y a 1h</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">👤</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Nouvelle inscription</div>
+                            <div class="activity-desc">marie.kouassi@hecm.bj attend l'approbation</div>
+                        </div>
+                        <div class="activity-time">Il y a 2h</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 968) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+
+        // Logout functionality
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                    // Supprimer les données localStorage
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('isAdmin');
+                    
+                    // Rediriger vers la page de connexion
+                    window.location.href = '../login.html';
+                }
+            });
+        }
+
+        // Animation des cartes au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observer tous les éléments animables
+        document.querySelectorAll('.stat-card, .chart-card, .activity-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Filter buttons
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Retirer la classe active de tous les boutons du même groupe
+                const parent = this.closest('.chart-filter');
+                if (parent) {
+                    parent.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                }
+                // Ajouter la classe active au bouton cliqué
+                this.classList.add('active');
+            });
+        });
+
+        // Navigation active state
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Retirer l'état actif de tous les items
+                navItems.forEach(nav => nav.classList.remove('active'));
+                // Ajouter l'état actif à l'item cliqué
+                this.classList.add('active');
+            });
+        });
+
+        // Simulation de mise à jour des stats en temps réel
+        function updateStats() {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                const currentValue = parseInt(stat.textContent.replace(/,/g, ''));
+                // Petite variation aléatoire (+/- 5)
+                const variation = Math.floor(Math.random() * 10) - 5;
+                const newValue = Math.max(0, currentValue + variation);
+                stat.textContent = newValue.toLocaleString();
+            });
+        }
+
+        // Mettre à jour les stats toutes les 30 secondes
+        setInterval(updateStats, 30000);
+
+        // Animation du compteur au chargement
+        function animateCounter(element, target, duration = 1000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Animer les compteurs au chargement
+        window.addEventListener('load', () => {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                const target = parseInt(stat.textContent.replace(/,/g, ''));
+                stat.textContent = '0';
+                setTimeout(() => {
+                    animateCounter(stat, target);
+                }, 300);
+            });
+        });
+
+        // Notification click
+        const notificationBtn = document.querySelector('.notification-btn');
+        if (notificationBtn) {
+            notificationBtn.addEventListener('click', () => {
+                alert('🔔 5 nouvelles notifications:\n\n1. Nouvelle demande d\'approbation\n2. Livre téléchargé 100 fois\n3. Nouveau message\n4. Rapport mensuel disponible\n5. Mise à jour système');
+            });
+        }
+
+        // Quick actions avec feedback
+        const actionBtns = document.querySelectorAll('.action-btn');
+        actionBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const text = this.querySelector('.action-btn-text').textContent;
+                
+                // Animation de feedback
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+                
+                console.log(`Action: ${text}`);
+                // Ici vous pouvez ajouter la navigation vers les pages correspondantes
+            });
+        });
+
+        // Recherche en temps réel
+        const searchInput = document.querySelector('.search-bar input');
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const query = this.value.trim();
+                    if (query.length > 2) {
+                        console.log('Recherche:', query);
+                        // Ici vous pouvez implémenter la recherche réelle
+                    }
+                }, 300);
+            });
+        }
+
+        // Afficher le nom de l'admin depuis localStorage ou session
+        function loadAdminInfo() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (userEmail) {
+                const userName = document.querySelector('.user-name');
+                const userAvatar = document.querySelector('.user-avatar');
+                
+                // Extraire le prénom de l'email ou utiliser la première lettre
+                const name = userEmail.split('@')[0].split('.')[0];
+                const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+                
+                if (userName) {
+                    userName.textContent = displayName;
+                }
+                
+                if (userAvatar) {
+                    userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                }
+            }
+        }
+
+        // Charger les infos admin au démarrage
+        loadAdminInfo();
+
+        // Protection: Vérifier si l'utilisateur est bien admin
+        function checkAdminAccess() {
+            const isAdmin = localStorage.getItem('isAdmin');
+            const userEmail = localStorage.getItem('userEmail');
+            
+            if (!isAdmin || isAdmin !== 'true' || !userEmail) {
+                console.warn('⚠️ Accès non autorisé');
+                // Rediriger vers la page de connexion
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Vérifier l'accès au chargement
+        checkAdminAccess();
+
+        // Console log pour le dev
+        console.log('%c🔐 HECM Admin Dashboard', 'color: #228B22; font-size: 20px; font-weight: bold;');
+        console.log('%c✅ Dashboard chargé avec succès', 'color: #10b981; font-size: 14px;');
+        
+        // Afficher les stats en console
+        console.table({
+            'Total Livres': '5,234',
+            'Utilisateurs Actifs': '1,892',
+            'En Attente': '47',
+            'Téléchargements': '3,421'
+        });
