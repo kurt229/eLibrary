@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,9 +71,19 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, -30px) rotate(120deg); }
-            66% { transform: translate(-20px, 20px) rotate(240deg); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
         }
 
         .waiting-container {
@@ -96,6 +107,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -129,8 +141,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         @keyframes ripple {
@@ -138,6 +157,7 @@
                 transform: scale(1);
                 opacity: 0.5;
             }
+
             100% {
                 transform: scale(1.5);
                 opacity: 0;
@@ -202,7 +222,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .info-box {
@@ -314,6 +336,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -321,11 +344,11 @@
         }
 
         .approved-container {
-            display: none;
+            display: none !important;
         }
 
         .approved-container.show {
-            display: block;
+            display: block !important;
         }
 
         .approved-container .icon-container {
@@ -389,6 +412,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="bg-shapes">
         <div class="shape shape1"></div>
@@ -402,9 +426,10 @@
         </div>
 
         <h1><span class="gradient-text">Compte créé</span> avec succès !</h1>
-        
+
         <p class="subtitle">
-            Votre inscription a été enregistrée. Un administrateur doit approuver votre compte avant que vous puissiez accéder à la bibliothèque.
+            Votre inscription a été enregistrée. Un administrateur doit approuver votre compte avant que vous puissiez
+            accéder à la bibliothèque.
         </p>
 
         <div class="email-display" id="emailDisplay">
@@ -444,7 +469,7 @@
         </div>
 
         <h1><span class="gradient-text">Compte approuvé</span> !</h1>
-        
+
         <p class="subtitle">
             Félicitations ! Votre compte a été approuvé par l'administrateur. Vous pouvez maintenant vous connecter.
         </p>
@@ -463,8 +488,8 @@
             </button>
         </div>
     </div>
-
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="waiting_approval.js"></script>
 </body>
+
 </html>
