@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - HECM E-Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,354 +15,565 @@
 
         :root {
             --primary: #228B22;
+            --primary-dark: #1a6b1a;
             --secondary: #32CD32;
-            --dark: #0a0a0a;
-            --gray: #666;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #f0fff4 0%, #ffffff 50%, #e8f5e9 100%);
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px;
+            /* Space for mobile nav */
         }
 
-        /* Header */
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 2px solid rgba(34, 139, 34, 0.1);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 0;
+            }
         }
 
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #1a4d1a 0%, #228B22 100%);
+            padding: 0.75rem 1.5rem;
+            color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo-circle {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 10px 30px rgba(34, 139, 34, 0.3);
-        }
-
-        .logo-text h1 {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--dark);
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo-text p {
-            font-size: 0.75rem;
-            color: var(--gray);
-        }
-
-        .user-section {
+        .nav-left {
             display: flex;
             align-items: center;
             gap: 1.5rem;
         }
 
-        .user-info {
-            text-align: right;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
         }
 
-        .user-name {
-            font-weight: 600;
-            color: var(--dark);
+        .logo-img {
+            height: 35px;
+            width: auto;
+            background: white;
+            padding: 2px;
+            border-radius: 6px;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: white;
+            display: none;
+        }
+
+        @media (min-width: 480px) {
+            .brand-name {
+                display: block;
+            }
+        }
+
+        /* Desktop Nav Links */
+        .desktop-nav {
+            display: none;
+            gap: 2rem;
+            margin-left: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .desktop-nav {
+                display: flex;
+            }
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
             font-size: 0.95rem;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .user-email {
-            font-size: 0.8rem;
-            color: var(--gray);
+        .nav-link:hover {
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn-header {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn-header:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
 
         .user-avatar {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(34, 139, 34, 0.3);
+            background: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
             overflow: hidden;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary);
+            font-weight: 700;
         }
 
         .user-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
 
-        .user-avatar-text {
+        /* Hero Section */
+        .hero {
+            padding: 4rem 1rem;
+            text-align: center;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--primary-dark);
+            font-weight: 800;
+            margin-bottom: 2.5rem;
+            line-height: 1.2;
+        }
+
+        .main-search-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #f8fafc;
+            padding: 0.5rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (min-width: 768px) {
+            .main-search-container {
+                flex-direction: row;
+                background: white;
+                padding: 0.25rem;
+                border-radius: 50px;
+                box-shadow: var(--shadow);
+            }
+        }
+
+        .search-input-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
             position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .search-input-group {
+                border-bottom: none;
+                border-right: 1px solid #e2e8f0;
+            }
+
+            .search-input-group:last-of-type {
+                border-right: none;
+            }
+        }
+
+        .search-icon {
+            color: var(--primary);
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .search-field {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--dark);
+            background: transparent;
+        }
+
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .search-btn {
+                border-radius: 50px;
+                margin: 0 0.25rem 0 0;
+            }
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            background: #f8fafc;
+            padding: 0 1.5rem;
             z-index: 1;
         }
 
-        .btn-logout {
-            padding: 0.7rem 1.5rem;
-            background: linear-gradient(135deg, #dc2626, #ef4444);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);
+        .section-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: #cbd5e1;
+            z-index: 0;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e2e8f0;
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            flex-direction: column;
+            min-height: 250px;
         }
 
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
         }
 
-        .btn-logout:active {
-            transform: translateY(0);
-        }
-
-        .btn-logout.loading {
-            opacity: 0.7;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1400px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
-
-        .welcome-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            text-align: center;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .welcome-icon {
-            font-size: 5rem;
-            margin-bottom: 1.5rem;
-            animation: wave 2s ease-in-out infinite;
-        }
-
-        @keyframes wave {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(20deg); }
-            75% { transform: rotate(-20deg); }
-        }
-
-        .welcome-card h2 {
-            font-size: 2.5rem;
-            color: var(--dark);
-            margin-bottom: 1rem;
+        .card-title {
+            font-size: 1.25rem;
             font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
         }
 
-        .welcome-card p {
-            font-size: 1.1rem;
+        .card-meta {
             color: var(--gray);
-            line-height: 1.6;
-            max-width: 600px;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+
+        .card-meta span {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-actions {
+            margin-top: auto;
+        }
+
+        .btn-card {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, var(--primary), #1e701e);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-card:hover {
+            opacity: 0.9;
+        }
+
+        /* Mobile Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0.75rem 1rem;
+            /* Space top/bottom */
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.08);
+            /* Stronger shadow */
+            z-index: 100;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .bottom-nav {
+                display: none;
+            }
+        }
+
+        .bottom-nav-content {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
             margin: 0 auto;
         }
 
-        .status-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(50, 205, 50, 0.1));
-            color: var(--primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: 2px solid var(--primary);
-            margin-top: 1.5rem;
+        .nav-item {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.5rem;
+            border-radius: 12px;
+            flex: 1;
         }
 
-        /* Loading Spinner */
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(34, 139, 34, 0.05);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+            transition: transform 0.2s;
+        }
+
+        .nav-item:hover .nav-icon {
+            transform: translateY(-2px);
+        }
+
+        .nav-text {
+            font-weight: 600;
+            font-size: 0.7rem;
+            /* Smaller text for mobile */
+            letter-spacing: 0.3px;
+        }
+
+        /* Dropdown custom style */
+        select.search-field {
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        /* Spinner for logout */
         .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
+            border-left-color: white;
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+            width: 14px;
+            height: 14px;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header {
-                padding: 1rem;
+            0% {
+                transform: rotate(0deg);
             }
 
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .user-section {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .logo-text h1 {
-                font-size: 1.3rem;
-            }
-
-            .main-content {
-                margin: 2rem auto;
-                padding: 0 1rem;
-            }
-
-            .welcome-card {
-                padding: 2rem 1.5rem;
-            }
-
-            .welcome-card h2 {
-                font-size: 2rem;
-            }
-
-            .welcome-icon {
-                font-size: 4rem;
-            }
-
-            .btn-logout {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .user-info {
-                display: none;
-            }
-
-            .logo-section {
-                gap: 0.7rem;
-            }
-
-            .logo-circle {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-
-            .user-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-
-            .logo-section {
-                gap: 0.7rem;
-            }
-
-            .logo-circle {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
+            100% {
+                transform: rotate(360deg);
             }
         }
     </style>
 </head>
+
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <div class="logo-circle">📚</div>
-                <div class="logo-text">
-                    <h1><span class="gradient-text">HECM</span> E-Library</h1>
-                    <p>Votre bibliothèque numérique</p>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="logo-container">
+                <img src="assets/images/logo.png" alt="Logo" class="logo-img">
+                <span class="brand-name">HECM E-Library</span>
+            </a>
+
+            <!-- Desktop Navigation Links (Moved here as requested) -->
+            <div class="desktop-nav">
+                <a href="#" class="nav-link">
+                    <span>📄</span> Tous les mémoires
+                </a>
+                <a href="#" class="nav-link">
+                    <span>❤️</span> Favoris
+                </a>
+                <a href="#" class="nav-link">
+                    <span>📤</span> Soumettre
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <!-- Logout Button next to items/logo area in the header -->
+            <button class="logout-btn-header" id="logoutBtn">
+                <span>🚪</span> <span
+                    style="display: none; @media(min-width: 640px){display:inline;}">Déconnexion</span>
+            </button>
+
+            <!-- User Avatar -->
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">
+                    <span id="userInitial">U</span>
                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Accédez aux mémoires<br>académiques de l'HECM</h1>
+
+        <div class="main-search-container">
+            <div class="search-input-group">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-field" placeholder="Mot-clé...">
             </div>
 
-            <div class="user-section">
-                <div class="user-info">
-                    <div class="user-name" id="userName">Utilisateur</div>
-                    <div class="user-email" id="userEmail">email@hecm.bj</div>
-                </div>
-                <div class="user-avatar" id="userAvatar">
-                    <span class="user-avatar-text" id="userAvatarText">U</span>
-                </div>
-                <button class="btn-logout" id="logoutBtn">
-                    <span>🚪</span>
-                    <span id="logoutText">Déconnexion</span>
-                </button>
+            <div class="search-input-group">
+                <select class="search-field">
+                    <option value="">Toutes les filières</option>
+                    <option value="gestion">Gestion</option>
+                    <option value="finance">Finance</option>
+                    <option value="rh">Ressources Humaines</option>
+                    <option value="info">Informatique</option>
+                </select>
             </div>
+
+            <div class="search-input-group">
+                <select class="search-field">
+                    <option value="">Toutes les années</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                </select>
+            </div>
+
+            <button class="search-btn">Rechercher</button>
         </div>
     </header>
 
-    <main class="main-content">
-        <div class="welcome-card">
-            <div class="welcome-icon">👋</div>
-            <h2>Bienvenue sur votre Dashboard !</h2>
-            <p>
-                Vous êtes maintenant connecté à votre espace personnel HECM E-Library. 
-                Profitez de toutes les ressources disponibles pour votre formation.
-            </p>
-            <div class="status-badge">✅ Compte actif</div>
+    <section class="content">
+        <div class="section-header">
+            <h2 class="section-title">Derniers mémoires</h2>
         </div>
-    </main>
+
+        <div class="cards-grid">
+            <!-- Initial content will be loaded by JS -->
+            <div class="spinner"
+                style="margin: 2rem auto; border-color: var(--primary); border-left-color: transparent;"></div>
+        </div>
+    </section>
+
+    <!-- Mobile Bottom Navigation (Improved Design) -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-content">
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📄</span>
+                <span class="nav-text">Mémoires</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">❤️</span>
+                <span class="nav-text">Favoris</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📤</span>
+                <span class="nav-text">Soumettre</span>
+            </a>
+        </div>
+    </nav>
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
@@ -368,30 +581,31 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpucGxibWdnaXdrcndoYXN2bm50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5MDY5OTcsImV4cCI6MjA3ODQ4Mjk5N30.Ee57N1miQbMO9hF_m1arrccv-6TbdHBL33Zy2YEL1q8";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const userNameEl = document.getElementById('userName');
-        const userEmailEl = document.getElementById('userEmail');
         const userAvatarEl = document.getElementById('userAvatar');
-        const userAvatarTextEl = document.getElementById('userAvatarText');
+        const userInitialEl = document.getElementById('userInitial');
         const logoutBtn = document.getElementById('logoutBtn');
-        const logoutText = document.getElementById('logoutText');
+        const searchInput = document.querySelector('.search-field[type="text"]');
+        const searchBtn = document.querySelector('.search-btn');
+        const cardsGrid = document.querySelector('.cards-grid');
+
+        const allSelects = document.querySelectorAll('select.search-field');
+        const filiereDropdown = allSelects[0];
+        const yearDropdown = allSelects[1];
+
 
         function getInitials(email) {
             if (!email) return 'U';
-            const parts = email.split('@')[0].split('.');
-            if (parts.length >= 2) {
-                return (parts[0][0] + parts[1][0]).toUpperCase();
-            }
             return email[0].toUpperCase();
         }
 
-        function formatName(email) {
-            if (!email) return 'Utilisateur';
-            const name = email.split('@')[0];
-            const parts = name.split('.');
-            if (parts.length >= 2) {
-                return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+        async function initDashboard() {
+            try {
+                await loadUserData();
+                loadFilieres();
+                loadDocuments();
+            } catch (err) {
+                console.error("Initialization failed:", err);
             }
-            return name.charAt(0).toUpperCase() + name.slice(1);
         }
 
         async function loadUserData() {
@@ -403,83 +617,212 @@
                 if (!session || !session.user) {
                     console.log('Aucune session active, redirection...');
                     window.location.href = 'login.html';
-                    return;
+                    return Promise.reject('No session');
                 }
 
                 const user = session.user;
                 const email = user.email;
                 const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
-                const fullName = user.user_metadata?.full_name || user.user_metadata?.name;
 
-                userEmailEl.textContent = email;
-                
-                if (fullName) {
-                    userNameEl.textContent = fullName;
-                } else {
-                    userNameEl.textContent = formatName(email);
-                }
+                console.log('Logged in as:', email);
 
                 if (avatarUrl) {
                     const img = document.createElement('img');
                     img.src = avatarUrl;
-                    img.alt = 'Photo de profil';
-                    img.onerror = () => {
-                        userAvatarTextEl.textContent = getInitials(email);
-                    };
+                    img.alt = 'Profile';
+                    userAvatarEl.innerHTML = '';
                     userAvatarEl.appendChild(img);
-                    userAvatarTextEl.style.display = 'none';
                 } else {
-                    userAvatarTextEl.textContent = getInitials(fullName || email);
+                    userInitialEl.textContent = getInitials(email);
                 }
-
-                console.log('Utilisateur connecté:', email);
-                console.log('Photo de profil:', avatarUrl || 'Non disponible');
 
             } catch (error) {
                 console.error('Erreur lors du chargement des données:', error);
                 window.location.href = 'login.html';
+                return Promise.reject(error);
             }
+        }
+
+        async function loadFilieres() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('filieres')
+                    .select('*')
+                    .order('name');
+
+                if (error) {
+                    console.error("Erreur chargement filières:", error);
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    filiereDropdown.innerHTML = '<option value="">Toutes les filières</option>';
+                    data.forEach(filiere => {
+                        const option = document.createElement('option');
+                        option.value = filiere.id;
+                        option.textContent = filiere.name;
+                        filiereDropdown.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur chargement filières:', error);
+            }
+        }
+
+        async function loadDocuments(filters = {}) {
+            try {
+                cardsGrid.innerHTML = '<div class="spinner" style="margin: 2rem auto; border-color: var(--primary); border-left-color: transparent;"></div>';
+
+                // Try fetching - fallback if join fails
+                let fallback = false;
+                let data = null;
+
+                try {
+                    // Attempt 1: Full rich data with relations
+                    // This requires 'filiere_id' to exist in 'documents' and the relation to be set up.
+                    let query = supabaseClient
+                        .from('documents')
+                        .select(`
+                            id,
+                            title,
+                            year,
+                            type,
+                            uploaded_at,
+                            file_url,
+                            filieres (name)
+                        `)
+                        .order('uploaded_at', { ascending: false });
+
+                    if (filters.keyword) query = query.ilike('title', `%${filters.keyword}%`);
+                    // Only filter by filiere if we think it exists (this might still fail if col missing)
+                    if (filters.filiereId) query = query.eq('filiere_id', filters.filiereId);
+                    if (filters.year) query = query.eq('year', parseInt(filters.year));
+
+                    const result = await query.limit(9);
+                    if (result.error) throw result.error;
+                    data = result.data;
+
+                } catch (err) {
+                    console.warn("Rich fetch failed (missing column/relation?), using safe fallback.", err);
+                    fallback = true;
+
+                    // Attempt 2: minimal data only. 
+                    // We REMOVE 'filiere_id' here so it works even if the column is missing.
+                    let query = supabaseClient
+                        .from('documents')
+                        .select(`
+                            id,
+                            title,
+                            year,
+                            type,
+                            uploaded_at,
+                            file_url
+                        `)
+                        .order('uploaded_at', { ascending: false });
+
+                    if (filters.keyword) query = query.ilike('title', `%${filters.keyword}%`);
+                    // We cannot filter by filiereId here because the column might not exist
+                    // if (filters.filiereId) ... skip
+                    if (filters.year) query = query.eq('year', parseInt(filters.year));
+
+                    const result = await query.limit(9);
+                    if (result.error) throw result.error;
+                    data = result.data;
+                }
+
+                renderDocuments(data, fallback);
+
+            } catch (error) {
+                console.error('Erreur chargement documents:', error);
+
+                let friendlyMsg = "⚠️ Erreur de chargement: " + (error.message || error);
+                cardsGrid.innerHTML = `<p style="text-align: center; color: #ef4444; grid-column: 1/-1; padding: 2rem;">${friendlyMsg}</p>`;
+            }
+        }
+
+        function renderDocuments(data, fallback) {
+            cardsGrid.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                cardsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--gray); padding: 2rem;">Aucun document trouvé pour cette recherche.</p>';
+                return;
+            }
+
+            data.forEach(doc => {
+                let filiereName = 'Général';
+                if (!fallback && doc.filieres?.name) {
+                    filiereName = doc.filieres.name;
+                } else if (doc.filiere_id && filiereDropdown) {
+                    // Try to match from dropdown if available
+                    const option = filiereDropdown.querySelector(`option[value="${doc.filiere_id}"]`);
+                    if (option) filiereName = option.textContent;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                const viewUrl = doc.file_url || '#';
+
+                card.innerHTML = `
+                    <h3 class="card-title">${doc.title}</h3>
+                    <div class="card-meta">
+                        <span>${filiereName}</span>
+                        <span>${doc.year || 'Année N/A'}</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="${viewUrl}" target="_blank" class="btn-card">Consulter ›</a>
+                    </div>
+                `;
+                cardsGrid.appendChild(card);
+            });
+        }
+
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                const filters = {
+                    keyword: searchInput.value,
+                    filiereId: filiereDropdown ? filiereDropdown.value : '',
+                    year: yearDropdown ? yearDropdown.value : ''
+                };
+                loadDocuments(filters);
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchBtn.click();
+                }
+            });
         }
 
         if (logoutBtn) {
             logoutBtn.addEventListener('click', async () => {
                 try {
-                    logoutBtn.classList.add('loading');
-                    logoutText.innerHTML = '<span class="spinner"></span>';
+                    const originalContent = logoutBtn.innerHTML;
+                    logoutBtn.innerHTML = '<span class="spinner"></span>';
+                    logoutBtn.style.pointerEvents = 'none';
 
                     const { error } = await supabaseClient.auth.signOut();
-
                     if (error) throw error;
 
-                    console.log('Déconnexion réussie');
-
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 500);
-
+                    window.location.href = 'login.html';
                 } catch (error) {
                     console.error('Erreur de déconnexion:', error);
-                    alert('Erreur lors de la déconnexion. Veuillez réessayer.');
-                    logoutBtn.classList.remove('loading');
-                    logoutText.textContent = 'Déconnexion';
+                    alert('Erreur: ' + error.message);
+                    logoutBtn.innerHTML = '<span>🚪</span> <span style="display: none; @media(min-width: 640px){display:inline;}">Déconnexion</span>';
+                    logoutBtn.style.pointerEvents = 'auto';
                 }
             });
         }
 
-        loadUserData();
-
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-            console.log('Auth state changed:', event);
-            
-            if (event === 'SIGNED_OUT') {
-                window.location.href = 'login.html';
-            } else if (event === 'TOKEN_REFRESHED') {
-                console.log('Token rafraîchi');
-            }
+        document.querySelectorAll('a[href="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
         });
 
-        console.log('%c🎯 HECM E-Library - Dashboard', 'color: #228B22; font-size: 16px; font-weight: bold;');
-        console.log('%cSession chargée', 'color: #32CD32; font-weight: bold;');
+        initDashboard();
     </script>
 </body>
+
 </html>
