@@ -1,843 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HECM E-Library - Bibliothèque du Futur</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #228B22;
-            --secondary: #32CD32;
-            --dark: #0a0a0a;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            overflow-x: hidden;
-            background: #ffffff;
-            color: #0a0a0a;
-        }
-
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .floating-shape {
-            position: absolute;
-            background: linear-gradient(135deg, rgba(34, 139, 34, 0.05), rgba(50, 205, 50, 0.05));
-            border-radius: 50%;
-            animation: float-random 20s infinite ease-in-out;
-        }
-
-        .shape1 { width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s; }
-        .shape2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-delay: 4s; }
-        .shape3 { width: 250px; height: 250px; bottom: 10%; left: 50%; animation-delay: 8s; }
-
-        @keyframes float-random {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(30px, -30px) rotate(90deg); }
-            50% { transform: translate(-20px, 20px) rotate(180deg); }
-            75% { transform: translate(40px, 10px) rotate(270deg); }
-        }
-
-        /* Navigation Ultra-Modern */
-        nav {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            /* reduced vertical padding to make the nav height smaller */
-            padding: 0.9rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        nav.scrolled {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        }
-
-        .logo {
-            /* slightly smaller logo to match reduced nav height */
-            font-size: 1.4rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-            position: relative;
-        }
-
-        .logo::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s;
-        }
-
-        .logo:hover::after {
-            transform: scaleX(1);
-        }
-
-        .nav-links {
-            display: flex;
-            /* tighter gap to fit the more compact nav */
-            gap: 1.5rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 600;
-            font-size: 0.95rem;
-            position: relative;
-            padding: 0.5rem 0;
-            transition: color 0.3s;
-        }
-
-        .nav-links a::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: translateX(-50%);
-            transition: width 0.3s;
-        }
-
-        .nav-links a:hover::before {
-            width: 100%;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            /* slightly smaller circular button */
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.3rem;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(34, 139, 34, 0.3);
-            transition: all 0.3s;
-        }
-
-        .mobile-menu-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Hero Section ULTRA */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            /* reduce top padding to bring section closer to the fixed nav */
-            padding: 4rem 5% 5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 5rem;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-text h1 {
-            /* Taille réduite pour h1 : garde une réponse fluide entre mobile et desktop */
-            font-size: clamp(1.8rem, 4.5vw, 3rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            letter-spacing: -2px;
-        }
-
-        .hero-text h1 .gradient-text {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: inline-block;
-            animation: gradient-shift 3s ease infinite;
-        }
-
-        @keyframes gradient-shift {
-            0%, 100% { filter: hue-rotate(0deg); }
-            50% { filter: hue-rotate(20deg); }
-        }
-
-        .hero-text p {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            color: #666;
-            line-height: 1.8;
-            margin-bottom: 2.5rem;
-            max-width: 600px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 1.2rem 2.8rem;
-            border-radius: 100px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            box-shadow: 0 20px 40px rgba(34, 139, 34, 0.3);
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            transition: left 0.4s;
-        }
-
-        .btn-primary:hover::before {
-            left: 0;
-        }
-
-        .btn-primary span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(34, 139, 34, 0.4);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .btn-secondary:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(34, 139, 34, 0.3);
-        }
-
-        /* 3D Book Display */
-        .hero-visual {
-            position: relative;
-            height: 600px;
-            perspective: 1500px;
-        }
-
-        .book-3d-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-        }
-
-        @keyframes rotate3d {
-            0% { transform: rotateY(0deg) rotateX(10deg); }
-            100% { transform: rotateY(360deg) rotateX(10deg); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .book-3d-container {
-                animation: none !important;
-            }
-            .book-3d {
-                animation: none !important;
-            }
-        }
-
-        .book-3d {
-            position: absolute;
-            width: 200px;
-            height: 280px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 15px;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform-style: preserve-3d;
-            transition: all 0.3s;
-            overflow: hidden;
-        }
-
-        .book-3d img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 15px;
-        }
-
-        .book-3d:hover {
-            transform: scale(1.1);
-        }
-
-        .book-3d-1 {
-            top: 50%;
-            left: 50%;
-            animation: position-swap 6s ease-in-out infinite;
-            z-index: 3;
-        }
-
-        .book-3d-2 {
-            top: 50%;
-            left: 50%;
-            background: linear-gradient(135deg, #2E8B57, #3CB371);
-            animation: position-swap 6s ease-in-out infinite -2s;
-            z-index: 2;
-        }
-
-        .book-3d-3 {
-            top: 50%;
-            left: 50%;
-            background: linear-gradient(135deg, #1a6b1a, #228B22);
-            animation: position-swap 6s ease-in-out infinite -4s;
-            z-index: 1;
-        }
-
-        @keyframes position-swap {
-            0%, 30% {
-                transform: translate(-50%, -50%) translateZ(100px);
-            }
-            33%, 63% {
-                transform: translate(-50%, -50%) translateZ(-100px) translateX(150px) rotateY(-30deg);
-            }
-            66%, 96% {
-                transform: translate(-50%, -50%) translateZ(-100px) translateX(-150px) rotateY(30deg);
-            }
-            100% {
-                transform: translate(-50%, -50%) translateZ(100px);
-            }
-        }
-
-        /* Glowing Stats */
-        .stats {
-            padding: 1rem 5% 5rem;
-            background: linear-gradient(180deg, #ffffff 0%, #f0fff4 100%);
-            position: relative;
-            margin-top: -5rem;
-        }
-
-        @media (max-width: 968px) {
-            .stats {
-                padding-top: 1rem; /* Réduit encore plus l'espace en haut de la section stats sur mobile */
-                margin-top: 0;
-            }
-        }
-
-        .stats-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2.5rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 3rem 2rem;
-            border-radius: 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid transparent;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(34, 139, 34, 0.1), transparent);
-            transform: rotate(0deg);
-            transition: transform 0.6s;
-        }
-
-        .stat-card:hover::before {
-            transform: rotate(180deg);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-15px) scale(1.05);
-            border-color: var(--primary);
-            box-shadow: 0 30px 60px rgba(34, 139, 34, 0.2);
-        }
-
-        .stat-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 5px 15px rgba(34, 139, 34, 0.3));
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .stat-number {
-            font-size: 4rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 1.1rem;
-            color: #666;
-            font-weight: 600;
-        }
-
-        /* Features Section with Cards */
-        .features {
-            padding: 7rem 5%;
-            background: white;
-        }
-
-        .section-header {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 5rem;
-        }
-
-        .section-tag {
-            display: inline-block;
-            padding: 0.6rem 1.5rem;
-            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(50, 205, 50, 0.1));
-            border-radius: 50px;
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 1px;
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            letter-spacing: -1px;
-        }
-
-        .section-subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .features-grid {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.5rem;
-        }
-
-        .feature-card {
-            background: linear-gradient(135deg, #ffffff, #f8fff8);
-            padding: 3rem;
-            border-radius: 25px;
-            border: 2px solid #e8f5e9;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(34, 139, 34, 0.05), rgba(50, 205, 50, 0.05));
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-15px);
-            border-color: var(--primary);
-            box-shadow: 0 30px 60px rgba(34, 139, 34, 0.15);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 15px 30px rgba(34, 139, 34, 0.3);
-            transition: all 0.4s;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: rotateY(360deg) scale(1.1);
-        }
-
-        .feature-card h3 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .feature-card p {
-            color: #666;
-            line-height: 1.7;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* CTA Mega Section */
-        .cta-section {
-            padding: 8rem 5%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        .cta-content {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .cta-content h2 {
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 900;
-            color: white;
-            margin-bottom: 1.5rem;
-            letter-spacing: -1px;
-        }
-
-        .cta-content p {
-            font-size: 1.3rem;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-        }
-
-        .btn-mega {
-            padding: 1.5rem 4rem;
-            background: white;
-            color: var(--primary);
-            border-radius: 100px;
-            font-size: 1.3rem;
-            font-weight: 800;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-mega:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Footer (réduit) */
-        footer {
-            background: var(--dark);
-            color: white;
-            /* padding réduit pour diminuer la hauteur du footer */
-            padding: 1.2rem 5%;
-            text-align: center;
-        }
-
-        footer p {
-            opacity: 0.7;
-            /* taille légèrement réduite pour compacter le contenu */
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 968px) {
-            .mobile-menu-btn {
-                display: block;
-                /* s'assurer que le bouton reste au-dessus des autres couches */
-                z-index: 1100;
-                position: relative;
-            }
-
-            .nav-links {
-                position: fixed;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100vh;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(20px);
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 3rem;
-                transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                /* placer le menu mobile au-dessus du nav et autres éléments */
-                z-index: 1050;
-            }
-
-            .nav-links.active {
-                left: 0;
-            }
-
-            .nav-links a {
-                font-size: 2rem;
-            }
-
-            .hero {
-                /* reduce top padding further to decrease space between nav and hero-visual */
-                padding: 4.5rem 5% 0; /* Réduit l'espace entre la nav et le hero-visual */
-            }
-
-            .hero-content {
-                grid-template-columns: 1fr;
-                gap: 1.5rem; /* Réduit encore plus l'espace entre le texte et le visuel */
-            }
-
-            .hero-visual {
-                height: 300px; /* Réduit davantage la hauteur du visuel */
-                order: -1;
-                margin-bottom: -2rem; /* Augmente l'espace négatif pour rapprocher encore plus de la section suivante */
-            }
-
-            .book-3d-container {
-                transform: scale(0.8);
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-
-            /* Réduire l'espacement des sections après l'accueil */
-            .stats {
-                padding: 2rem 5%;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.8rem;
-            }
-
-            .features {
-                padding: 3rem 5%;
-            }
-
-            .section-header {
-                margin-bottom: 2rem;
-            }
-
-            .section-title {
-                font-size: clamp(1.8rem, 4vw, 2.5rem);
-                margin-bottom: 1rem;
-            }
-
-            .section-subtitle {
-                font-size: 1rem;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .feature-card {
-                padding: 1.5rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .cta-section {
-                padding: 3rem 5%;
-            }
-
-            .cta-content h2 {
-                font-size: clamp(1.5rem, 4vw, 2.5rem);
-                margin-bottom: 1rem;
-            }
-
-            .cta-content p {
-                font-size: 1rem;
-                margin-bottom: 1.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-card {
-                padding: 1.2rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .stat-icon {
-                font-size: 2.5rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .stat-number {
-                font-size: 2.5rem;
-                margin-bottom: 0.3rem;
-            }
-
-            .stat-label {
-                font-size: 0.9rem;
-            }
-
-            .hero-visual {
-                height: 300px;
-            }
-
-            .book-3d-container {
-                transform: scale(0.6);
-            }
-
-            .feature-card {
-                padding: 1.2rem;
-                margin-bottom: 0.3rem;
-            }
-
-            .feature-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.8rem;
-                margin-bottom: 1rem;
-                border-radius: 15px;
-            }
-
-            .feature-card h3 {
-                font-size: 1.2rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .feature-card p {
-                font-size: 0.9rem;
-                line-height: 1.5;
-            }
-
-            .btn-mega {
-                padding: 1rem 2.5rem;
-                font-size: 1rem;
-            }
-        }
-    </style>
+    <title>HECM E-Library - Votre Bibliothèque Académique</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/images/logo3.png" type="image/png">
 </head>
-<body>
-    <div class="bg-animation">
-        <div class="floating-shape shape1"></div>
-        <div class="floating-shape shape2"></div>
-        <div class="floating-shape shape3"></div>
-    </div>
 
+<body>
     <nav id="navbar">
-        <div class="logo">HECM E-Library</div>
+        <div class="logo">
+            <img src="assets/images/logo.png" alt="HECM Logo">
+            <span>HECM E-Library</span>
+        </div>
         <button class="mobile-menu-btn" id="menuBtn">☰</button>
         <ul class="nav-links" id="navLinks">
             <li><a href="#accueil">Accueil</a></li>
-            <li><a href="#stats">Statistiques</a></li>
+            <li><a href="#comment">Comment ça marche</a></li>
             <li><a href="#features">Fonctionnalités</a></li>
             <li><a href="signup.html">S'inscrire</a></li>
             <li><a href="login.html">Connexion</a></li>
@@ -847,120 +28,170 @@
     <section class="hero" id="accueil">
         <div class="hero-content">
             <div class="hero-text">
-                <h1>La <span class="gradient-text">Bibliothèque</span> du&nbsp;Futur</h1>
-                <p>
-                    Accédez instantanément à plus de 5000 ouvrages numérisés de HECM Bohicon. 
-                    Une expérience de lecture révolutionnaire, disponible 24/7 sur tous vos appareils.
+                <h1>Lire <span class="gradient-text">- Apprendre -</span> Avancer</h1>
+                <p class="subtitle">
+                    Accédez instantanément aux anciennes épreuves et mémoires de soutenance. Tout est centralisé et
+                    disponible 24/7.
                 </p>
                 <div class="hero-buttons">
-                    <a href="signup.html" class="btn btn-primary">
-                        <span>🚀 Commencer Gratuitement</span>
-                    </a>
-                    <a href="#features" class="btn btn-secondary">📚 Découvrir Plus</a>
+                    <a href="signup.html" class="btn btn-primary"><span>Commencer gratuitement</span></a>
+                    <a href="#comment" class="btn btn-secondary">Découvrir comment</a>
+                </div>
+                <div class="trust-indicators">
+                    <div class="trust-item">
+                        <span class="icon">✓</span>
+                        <span>100% Gratuit</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="icon">✓</span>
+                        <span>Accès illimité</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="icon">✓</span>
+                        <span>Téléchargement direct</span>
+                    </div>
                 </div>
             </div>
             <div class="hero-visual">
                 <div class="book-3d-container">
-                    <div class="book-3d book-3d-1"><img src="assets/images/livre1.png" alt="Livre 1" width="200" height="280"></div>
-                    <div class="book-3d book-3d-2"><img src="assets/images/livre2.png" alt="Livre 2" width="200" height="280"></div>
-                    <div class="book-3d book-3d-3"><img src="assets/images/livre3.png" alt="Livre 3" width="200" height="280"></div>
+                    <div class="book-3d book-3d-1">
+                        <img src="assets/images/livre1.png" alt="Épreuve de mathématiques" width="220" height="300">
+                    </div>
+                    <div class="book-3d book-3d-2">
+                        <img src="assets/images/livre2.png" alt="Mémoire de gestion" width="220" height="300">
+                    </div>
+                    <div class="book-3d book-3d-3">
+                        <img src="assets/images/livre3.png" alt="Épreuve d'économie" width="220" height="300">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="stats" id="stats">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">📚</div>
-                <div class="stat-number">5000+</div>
-                <div class="stat-label">Livres Disponibles</div>
+    <section class="value-proposition">
+        <div class="value-grid">
+            <div class="value-card">
+                <div class="value-icon">📝</div>
+                <h3>Épreuves Anciennes</h3>
+                <p>Préparez vos compositions avec les épreuves des années précédentes. Comprenez les formats et
+                    entraînez-vous efficacement.</p>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">⚡</div>
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">Accès Illimité</div>
+            <div class="value-card">
+                <div class="value-icon">🎓</div>
+                <h3>Mémoires de Soutenance</h3>
+                <p>Inspirez-vous des travaux d'anciens étudiants. Découvrez comment structurer et présenter votre propre
+                    mémoire.</p>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">🎓</div>
-                <div class="stat-number">50+</div>
-                <div class="stat-label">Domaines d'Étude</div>
+            <div class="value-card">
+                <div class="value-icon">⚡</div>
+                <h3>Accès Instantané</h3>
+                <p>Terminé les recherches interminables. Trouvez ce dont vous avez besoin en quelques secondes et
+                    téléchargez directement.</p>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">💎</div>
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Gratuit & Accessible</div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="comment">
+        <div class="section-header">
+            <span class="section-tag">Simple & Efficace</span>
+            <h2 class="section-title">Comment ça marche ?</h2>
+            <p class="section-subtitle">
+                En trois étapes simples, accédez à toute la bibliothèque académique dont vous avez besoin
+            </p>
+        </div>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Recherchez votre document</h3>
+                    <p>Utilisez notre moteur de recherche pour trouver les épreuves ou mémoires par filière, matière ou
+                        année. Filtrez facilement pour trouver exactement ce dont vous avez besoin.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Consultez en ligne</h3>
+                    <p>Prévisualisez le document directement dans votre navigateur. Vérifiez qu'il correspond à vos
+                        besoins avant de le télécharger.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Téléchargez instantanément</h3>
+                    <p>Un simple clic et le document est à vous. Étudiez hors ligne, partagez avec vos camarades, et
+                        réussissez vos examens.</p>
+                </div>
             </div>
         </div>
     </section>
 
     <section class="features" id="features">
         <div class="section-header">
-            <span class="section-tag">✨ FONCTIONNALITÉS</span>
-            <h2 class="section-title">Une Expérience de Lecture Inégalée</h2>
+            <span class="section-tag">Fonctionnalités</span>
+            <h2 class="section-title">Tout ce dont vous avez besoin</h2>
             <p class="section-subtitle">
-                Des outils puissants conçus pour transformer votre façon d'étudier et d'apprendre
+                Une plateforme conçue pour les étudiants, par des étudiants
             </p>
         </div>
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon">🔍</div>
-                <h3>Recherche Intelligente</h3>
-                <p>Trouvez n'importe quel livre en quelques secondes grâce à notre moteur de recherche IA ultra-rapide et précis.</p>
+                <h3>Recherche Avancée</h3>
+                <p>Filtrez par filière, matière, type de document et année. Trouvez exactement ce que vous cherchez.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">📱</div>
                 <h3>Multi-Plateforme</h3>
-                <p>Lisez sur votre téléphone, tablette ou ordinateur. Synchronisation automatique entre tous vos appareils.</p>
+                <p>Accédez depuis votre téléphone, tablette ou ordinateur. Vos documents partout, tout le temps.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">🎨</div>
-                <h3>Lecture Personnalisée</h3>
-                <p>Mode sombre, taille de police, contraste... Personnalisez votre expérience de lecture selon vos préférences.</p>
+                <div class="feature-icon">⬇️</div>
+                <h3>Téléchargement Rapide</h3>
+                <p>Téléchargez vos documents en un clic. Format PDF optimisé pour une lecture facile.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🔖</div>
-                <h3>Annotations & Notes</h3>
-                <p>Surlignez, annotez et prenez des notes directement dans vos livres. Tout est sauvegardé dans le cloud.</p>
+                <h3>Bibliothèque Personnelle</h3>
+                <p>Sauvegardez vos documents favoris. Créez votre propre collection pour y accéder rapidement.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Téléchargement Éclair</h3>
-                <p>Téléchargez vos livres en quelques secondes pour une lecture hors ligne, partout où vous allez.</p>
+                <div class="feature-icon">🌐</div>
+                <h3>Toujours Disponible</h3>
+                <p>La plateforme est accessible 24/7. Étudiez quand vous voulez, où vous voulez.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">🌍</div>
-                <h3>Accessible Partout</h3>
-                <p>Accédez à votre bibliothèque depuis n'importe où dans le monde, à tout moment de la journée.</p>
+                <div class="feature-icon">🔒</div>
+                <h3>Sécurisé & Fiable</h3>
+                <p>Vos données sont protégées. Tous les documents sont vérifiés et de qualité.</p>
             </div>
         </div>
     </section>
 
-    <section class="cta-section" id="cta">
+    <section class="cta-section">
         <div class="cta-content">
-            <h2>Prêt à Révolutionner Votre Façon d'Apprendre ?</h2>
+            <h2>Prêt à réussir vos examens ?</h2>
             <p>
-                Rejoignez des milliers d'étudiants de HECM qui utilisent déjà notre bibliothèque numérique pour exceller dans leurs études.
+                Rejoignez les étudiants de HECM qui utilisent notre plateforme pour accéder aux ressources
+                académiques et exceller dans leurs études.
             </p>
-            <a href="signup.html" class="btn-mega">🎯 Commencer Gratuitement</a>
+            <a href="signup.html" class="btn-cta">Créer mon compte gratuitement</a>
         </div>
     </section>
 
     <footer>
-        <p>© 2025 HECM Bohicon E-Library. Conçu avec 💚 pour les étudiants.</p>
+        <p>© 2025 HECM Bohicon E-Library. Fait avec <span class="heart">❤️</span> par KurtDev.</p>
     </footer>
 
     <script>
-        // Mobile Menu
         const menuBtn = document.getElementById('menuBtn');
         const navLinks = document.getElementById('navLinks');
         const navbar = document.getElementById('navbar');
 
-        // Sécurité : vérifier que les éléments existent avant d'ajouter des écouteurs
         if (menuBtn && navLinks) {
             menuBtn.addEventListener('click', () => {
                 navLinks.classList.toggle('active');
-                // Mettre à jour l'icône du bouton seulement si menuBtn existe
                 menuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
             });
 
@@ -972,7 +203,6 @@
             });
         }
 
-        // Navbar scroll effect
         window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
@@ -981,7 +211,6 @@
             }
         });
 
-        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -992,7 +221,6 @@
             });
         });
 
-        // Intersection Observer for animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -1007,47 +235,13 @@
             });
         }, observerOptions);
 
-        // Animate elements on scroll
-        document.querySelectorAll('.stat-card, .feature-card').forEach(el => {
+        document.querySelectorAll('.value-card, .feature-card, .step').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'all 0.6s ease-out';
             observer.observe(el);
         });
-
-        // Counter animation for stats
-        const animateCounter = (element, target) => {
-            let current = 0;
-            const increment = target / 50;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    element.textContent = target + (element.textContent.includes('+') ? '+' : '') + (element.textContent.includes('%') ? '%' : '');
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(current) + (element.textContent.includes('+') ? '+' : '') + (element.textContent.includes('%') ? '%' : '');
-                }
-            }, 30);
-        };
-
-        // Animate stats when visible
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const number = entry.target.querySelector('.stat-number');
-                    const text = number.textContent;
-                    const value = parseInt(text);
-                    if (!isNaN(value) && !entry.target.classList.contains('animated')) {
-                        entry.target.classList.add('animated');
-                        animateCounter(number, value);
-                    }
-                }
-            });
-        }, { threshold: 0.5 });
-
-        document.querySelectorAll('.stat-card').forEach(card => {
-            statsObserver.observe(card);
-        });
     </script>
 </body>
+
 </html>

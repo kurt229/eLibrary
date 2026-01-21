@@ -1,0 +1,152 @@
+CREATE OR REPLACE FUNCTION get_all_users()
+RETURNS TABLE (
+    id uuid,
+    email text,
+    full_name text,
+    avatar_url text,
+    is_admin boolean,
+    is_ok boolean,
+    created_at timestamptz,
+    last_sign_in_at timestamptz,
+    email_confirmed_at timestamptz
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    requesting_user_id uuid;
+    is_requesting_admin boolean;
+BEGIN
+    -- Récupérer l'ID de l'utilisateur qui fait la requête
+    requesting_user_id := auth.uid();
+    
+    -- Vérifier si c'est un admin
+    SELECT COALESCE((raw_user_meta_data->>'is_admin')::boolean, false)
+    INTO is_requesting_admin
+    FROM auth.users
+    WHERE auth.users.id = requesting_user_id;
+    
+    -- Si pas admin, retourner un ensemble vide
+    IF NOT COALESCE(is_requesting_admin, false) THEN
+        RAISE EXCEPTION 'Accès non autorisé: vous devez être administrateur';
+    END IF;
+    
+    -- Retourner tous les utilisateurs
+    RETURN QUERY
+    SELECT 
+        u.id,
+        u.email::text,
+        COALESCE(u.raw_user_meta_data->>'full_name', u.raw_user_meta_data->>'name', '')::text as full_name,
+        COALESCE(u.raw_user_meta_data->>'avatar_url', u.raw_user_meta_data->>'picture', '')::text as avatar_url,
+        COALESCE((u.raw_user_meta_data->>'is_admin')::boolean, false) as is_admin,
+        COALESCE((u.raw_user_meta_data->>'is_ok')::boolean, false) as is_ok,
+        u.created_at,
+        u.last_sign_in_at,
+        u.email_confirmed_at
+    FROM auth.users u
+    ORDER BY u.created_at DESC;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION approve_user(target_user_id uuid)
+RETURNS json
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+SET role = postgres
+AS $$
+DECLARE
+    requesting_user_id uuid;
+    is_requesting_admin boolean;
+    target_user_email text;
+    updated_meta jsonb;
+BEGIN
+    -- Récupérer l'ID de l'utilisateur qui fait la requête
+    requesting_user_id := auth.uid();
+    
+    -- Vérifier si c'est un admin
+    SELECT COALESCE((raw_user_meta_data->>'is_admin')::boolean, false)
+    INTO is_requesting_admin
+    FROM auth.users
+    WHERE id = requesting_user_id;
+    
+    IF NOT COALESCE(is_requesting_admin, false) THEN
+        RETURN json_build_object('success', false, 'error', 'Accès non autorisé');
+    END IF;
+    
+    -- Récupérer les métadonnées actuelles et l'email du compte cible
+    SELECT raw_user_meta_data, email
+    INTO updated_meta, target_user_email
+    FROM auth.users
+    WHERE id = target_user_id;
+    
+    IF updated_meta IS NULL THEN
+        RETURN json_build_object('success', false, 'error', 'Utilisateur non trouvé');
+    END IF;
+    
+    -- Mettre à jour is_ok à true
+    updated_meta := jsonb_set(updated_meta, '{is_ok}', 'true'::jsonb);
+    
+    -- Appliquer la mise à jour dans auth.users
+    UPDATE auth.users
+    SET raw_user_meta_data = updated_meta
+    WHERE id = target_user_id;
+    
+    RETURN json_build_object(
+        'success', true, 
+        'message', 'Utilisateur approuvé avec succès',
+        'email', target_user_email
+    );
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION delete_user(target_user_id uuid)
+RETURNS json
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET role = postgres
+SET search_path = public, auth
+AS $$
+DECLARE
+    requesting_user_id uuid;
+    is_requesting_admin boolean;
+    target_email text;
+BEGIN
+    -- ID de l'utilisateur qui fait la requête
+    requesting_user_id := auth.uid();
+    
+    -- Vérifier si l'utilisateur est admin
+    SELECT COALESCE((raw_user_meta_data->>'is_admin')::boolean, false)
+    INTO is_requesting_admin
+    FROM auth.users
+    WHERE id = requesting_user_id;
+    
+    IF NOT COALESCE(is_requesting_admin, false) THEN
+        RETURN json_build_object('success', false, 'error', 'Accès non autorisé');
+    END IF;
+    
+    -- Empêcher l'admin de supprimer son propre compte
+    IF target_user_id = requesting_user_id THEN
+        RETURN json_build_object('success', false, 'error', 'Vous ne pouvez pas supprimer votre propre compte');
+    END IF;
+    
+    -- Récupérer l'email de l'utilisateur cible
+    SELECT email INTO target_email FROM auth.users WHERE id = target_user_id;
+    
+    IF target_email IS NULL THEN
+        RETURN json_build_object('success', false, 'error', 'Utilisateur non trouvé');
+    END IF;
+    
+    -- Supprimer l'utilisateur
+    DELETE FROM auth.users WHERE id = target_user_id;
+    
+    -- Retour JSON
+    RETURN json_build_object(
+        'success', true, 
+        'message', 'Utilisateur supprimé', 
+        'email', target_email
+    );
+END;
+$$;
